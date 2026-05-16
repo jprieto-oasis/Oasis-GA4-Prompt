@@ -226,7 +226,11 @@ async function generateGA4RequestFromPrompt(userPrompt, apiKey) {
         })
     });
 
-    if (!response.ok) throw new Error('Error de conexión con Gemini');
+    if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        console.error("Gemini API Error:", errData);
+        throw new Error(`Error de IA (${response.status}): ${errData.error?.message || response.statusText}`);
+    }
 
     const data = await response.json();
     let textResult = data.candidates[0].content.parts[0].text;
