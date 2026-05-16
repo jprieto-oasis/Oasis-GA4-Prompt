@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oasis GA4 Prompt</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- HEADER -->
+        <header>
+            <div class="logo">
+                <i class="fa-solid fa-chart-pie"></i>
+                <span>Oasis GA4 Prompt</span>
+            </div>
+            <div class="header-actions">
+                <button id="settings-btn" class="icon-btn" title="Configuración de IA" style="display:none;">
+                    <i class="fa-solid fa-gear"></i>
+                </button>
+                <div id="user-profile" class="user-profile" style="display:none;">
+                    <img id="user-avatar" src="" alt="Avatar">
+                    <button id="logout-btn" class="icon-btn" title="Cerrar sesión">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- LOGIN OVERLAY -->
+        <div id="login-overlay" class="overlay active">
+            <div class="glass-card login-card">
+                <div class="login-header">
+                    <i class="fa-brands fa-google"></i>
+                    <h2>Bienvenido a Oasis</h2>
+                    <p>Inicia sesión con tu cuenta corporativa para acceder a tus datos de Google Analytics 4.</p>
+                </div>
+                <div class="login-actions">
+                    <button id="auth-btn" class="primary-btn">
+                        <i class="fa-brands fa-google"></i> Conectar con Google Analytics
+                    </button>
+                </div>
+                <p id="login-error" class="error-msg"></p>
+            </div>
+        </div>
+
+        <!-- MAIN DASHBOARD -->
+        <main id="dashboard" style="display:none;">
+            <!-- AI PROMPT SECTION -->
+            <section class="prompt-section">
+                <div class="prompt-container glass-card">
+                    <div class="prompt-header">
+                        <h3><i class="fa-solid fa-wand-magic-sparkles"></i> Pregúntale a tus datos</h3>
+                    </div>
+                    <form id="prompt-form" class="prompt-input-wrapper">
+                        <input type="text" id="ai-prompt" placeholder="Ej: Muéstrame un gráfico de barras con los usuarios por ciudad de los últimos 7 días..." autocomplete="off">
+                        <button type="submit" id="generate-btn" class="primary-btn">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </form>
+                    <p id="prompt-status" class="status-msg"></p>
+                </div>
+            </section>
+
+            <!-- AI RESULT SECTION -->
+            <section class="ai-result-section" id="ai-result-section" style="display:none;">
+                <div class="chart-card glass-card">
+                    <div class="chart-header">
+                        <h3 id="ai-chart-title">Resultados de IA</h3>
+                        <button id="close-ai-chart" class="icon-btn"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="aiChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- STANDARD DASHBOARD SECTION -->
+            <section class="standard-dashboard">
+                <div class="dashboard-grid">
+                    <!-- Card 1 -->
+                    <div class="chart-card glass-card">
+                        <h3>Usuarios Activos (Últimos 7 días)</h3>
+                        <div class="chart-container">
+                            <canvas id="usersChart"></canvas>
+                        </div>
+                    </div>
+                    <!-- Card 2 -->
+                    <div class="chart-card glass-card">
+                        <h3>Sesiones por Dispositivo</h3>
+                        <div class="chart-container">
+                            <canvas id="deviceChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- SETTINGS MODAL -->
+        <div id="settings-modal" class="modal-overlay">
+            <div class="glass-card modal-card">
+                <div class="modal-header">
+                    <h3>Configuración de IA (Gemini)</h3>
+                    <button id="close-settings" class="icon-btn"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="modal-body">
+                    <p>Para usar el buscador inteligente, necesitas una API Key de Google Gemini.</p>
+                    <div class="input-group">
+                        <label for="gemini-key">Gemini API Key</label>
+                        <input type="password" id="gemini-key" placeholder="Pega tu API Key aquí...">
+                    </div>
+                    <p class="help-text">La clave se guarda localmente en tu navegador. Puedes obtener una gratis en <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a>.</p>
+                </div>
+                <div class="modal-footer">
+                    <button id="clear-key-btn" class="secondary-btn">Borrar Clave</button>
+                    <button id="save-key-btn" class="primary-btn">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
