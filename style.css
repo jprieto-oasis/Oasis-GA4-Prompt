@@ -415,6 +415,64 @@ main {
     gap: 1rem;
 }
 
+/* AI Table Styles */
+#ai-table-container {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--card-border);
+}
+
+#ai-table-container::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+#ai-table-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#ai-table-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+
+.ai-data-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.95rem;
+}
+
+.ai-data-table th, 
+.ai-data-table td {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ai-data-table th {
+    background: rgba(99, 102, 241, 0.15);
+    color: var(--text-primary);
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    backdrop-filter: blur(8px);
+    z-index: 10;
+}
+
+.ai-data-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.ai-data-table td.number-cell {
+    text-align: right;
+    font-family: monospace;
+    font-size: 1rem;
+    color: var(--success-color);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .dashboard-grid {
@@ -423,7 +481,7 @@ main {
     .prompt-input-wrapper {
         flex-direction: column;
     }
-    .prompt-input-wrapper button {
+    .modal-footer button {
         width: 100%;
         justify-content: center;
     }

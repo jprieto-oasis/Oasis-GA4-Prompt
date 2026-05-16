@@ -207,8 +207,15 @@ async function generateGA4RequestFromPrompt(userPrompt, apiKey) {
          "dimensions": [{"name": "nombre_dimension"}],
          "metrics": [{"name": "nombre_metrica"}]
       },
-      "chartType": "bar" // opciones: bar, line, pie, doughnut
+      "chartType": "bar" // opciones: bar, line, pie, doughnut, table
     }
+    
+    REGLA MUY IMPORTANTE SOBRE chartType:
+    - Si el usuario pide explícitamente "una tabla" o si pide "varias columnas" o usas MÁS DE UNA dimensión, DEBES elegir obligatoriamente "table".
+    - Usa "pie" o "doughnut" para porcentajes simples de una sola dimensión.
+    - Usa "line" para tendencias a lo largo del tiempo (date).
+    - Usa "bar" para comparaciones de una métrica entre categorías.
+
     Dimensiones comunes: date, country, city, deviceCategory, pagePath, sessionSourceMedium.
     Métricas comunes: activeUsers, sessions, screenPageViews, bounceRate, totalRevenue.
     Asegúrate de que los nombres de las dimensiones y métricas sean válidos en GA4.
@@ -251,23 +258,61 @@ function processAndRenderAIChart(ga4Data, chartType, originalPrompt) {
     }
 
     aiChartTitle.textContent = originalPrompt;
+    
+    const canvasEl = document.getElementById('aiChart');
+    const tableContainer = document.getElementById('ai-table-container');
 
-    const labels = ga4Data.rows.map(row => {
-        let label = row.dimensionValues[0].value;
-        // Format date if it's a date dimension
-        if (label.length === 8 && !isNaN(label)) {
-            label = `${label.substring(6,8)}/${label.substring(4,6)}`;
-        }
-        return label;
+    if (chartType === 'table') {
+        canvasEl.style.display = 'none';
+        tableContainer.style.display = 'block';
+        renderTable(ga4Data, tableContainer);
+    } else {
+        tableContainer.style.display = 'none';
+        canvasEl.style.display = 'block';
+
+        const labels = ga4Data.rows.map(row => {
+            let label = row.dimensionValues[0].value;
+            if (label.length === 8 && !isNaN(label)) {
+                label = `${label.substring(6,8)}/${label.substring(4,6)}`;
+            }
+            return label;
+        });
+        
+        const values = ga4Data.rows.map(row => parseFloat(row.metricValues[0].value));
+        const metricName = ga4Data.metricHeaders[0].name;
+        const colors = ['#6366f1', '#10b981', '#ec4899', '#f59e0b', '#8b5cf6', '#06b6d4'];
+
+        renderChart('aiChart', chartType, labels, values, metricName, colors);
+    }
+}
+
+function renderTable(ga4Data, container) {
+    const dimensionHeaders = ga4Data.dimensionHeaders.map(h => h.name);
+    const metricHeaders = ga4Data.metricHeaders.map(h => h.name);
+    
+    let tableHtml = '<table class="ai-data-table"><thead><tr>';
+    
+    dimensionHeaders.forEach(h => { tableHtml += `<th>${h}</th>`; });
+    metricHeaders.forEach(h => { tableHtml += `<th class="number-cell">${h}</th>`; });
+    tableHtml += '</tr></thead><tbody>';
+
+    ga4Data.rows.forEach(row => {
+        tableHtml += '<tr>';
+        row.dimensionValues.forEach(dim => {
+            let val = dim.value;
+            if (val.length === 8 && !isNaN(val)) val = `${val.substring(6,8)}/${val.substring(4,6)}/${val.substring(0,4)}`;
+            tableHtml += `<td>${val}</td>`;
+        });
+        row.metricValues.forEach(met => {
+            const num = parseFloat(met.value);
+            const formatted = Number.isInteger(num) ? num.toLocaleString() : num.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            tableHtml += `<td class="number-cell">${formatted}</td>`;
+        });
+        tableHtml += '</tr>';
     });
     
-    const values = ga4Data.rows.map(row => parseFloat(row.metricValues[0].value));
-    const metricName = ga4Data.metricHeaders[0].name;
-
-    // Colores dinámicos
-    const colors = ['#6366f1', '#10b981', '#ec4899', '#f59e0b', '#8b5cf6', '#06b6d4'];
-
-    renderChart('aiChart', chartType, labels, values, metricName, colors);
+    tableHtml += '</tbody></table>';
+    container.innerHTML = tableHtml;
 }
 
 // Helper para Chart.js
@@ -302,6 +347,26 @@ function renderChart(canvasId, type, labels, data, labelName, colors) {
                 legend: {
                     display: type !== 'bar' && type !== 'line',
                     position: 'bottom'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            const val = context.raw;
+                            
+                            // Calculate percentage
+                            const dataset = context.chart.data.datasets[context.datasetIndex];
+                            const total = dataset.data.reduce((acc, curr) => acc + curr, 0);
+                            const percentage = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
+                            
+                            const formattedVal = Number.isInteger(val) ? val.toLocaleString() : val.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                            
+                            return `${label}${formattedVal} (${percentage}%)`;
+                        }
+                    }
                 }
             },
             scales: (type === 'pie' || type === 'doughnut') ? {} : {
