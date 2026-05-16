@@ -114,11 +114,23 @@
                 </div>
                 <div class="modal-body">
                     <p>Para usar el buscador inteligente, necesitas una API Key de Google Gemini.</p>
+                    
+                    <details class="api-instructions">
+                        <summary><i class="fa-solid fa-circle-info"></i> ¿Cómo obtener tu API Key gratis?</summary>
+                        <ol>
+                            <li>Ve a <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a> e inicia sesión con tu cuenta de Google.</li>
+                            <li>Acepta los términos de servicio si es tu primera vez.</li>
+                            <li>Haz clic en el botón azul <strong>"Create API key"</strong>.</li>
+                            <li>Selecciona el proyecto (o crea uno nuevo) y haz clic en "Create API key in existing project".</li>
+                            <li>Copia el código largo que aparecerá en pantalla y pégalo aquí abajo.</li>
+                        </ol>
+                    </details>
+
                     <div class="input-group">
                         <label for="gemini-key">Gemini API Key</label>
                         <input type="password" id="gemini-key" placeholder="Pega tu API Key aquí...">
                     </div>
-                    <p class="help-text">La clave se guarda localmente en tu navegador. Puedes obtener una gratis en <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a>.</p>
+                    <p class="help-text">La clave se guarda de forma 100% local en tu navegador.</p>
                 </div>
                 <div class="modal-footer">
                     <button id="clear-key-btn" class="secondary-btn">Borrar Clave</button>

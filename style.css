@@ -361,9 +361,52 @@ main {
     margin-bottom: 1.5rem;
 }
 
-.help-text a {
+.api-instructions {
+    margin-top: 1rem;
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+}
+
+.api-instructions summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--accent-color);
+    list-style: none; /* Hide default arrow */
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+}
+
+.api-instructions summary::-webkit-details-marker {
+    display: none; /* Hide default arrow in webkit */
+}
+
+.api-instructions summary:hover {
+    color: var(--accent-hover);
+}
+
+.api-instructions ol {
+    margin-top: 0.5rem;
+    padding-left: 1.5rem;
+    padding-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.api-instructions ol li {
+    margin-bottom: 0.5rem;
+}
+
+.api-instructions a {
     color: var(--accent-color);
     text-decoration: none;
+}
+
+.api-instructions a:hover {
+    text-decoration: underline;
 }
 
 .modal-footer {
